@@ -1,0 +1,65 @@
+import { flags, SfdxCommand } from '@salesforce/command';
+import { Messages } from '@salesforce/core';
+import { AnyJson } from '@salesforce/ts-types';
+import * as shelljs from 'shelljs'
+
+// Initialize Messages with the current plugin directory
+Messages.importMessagesDirectory(__dirname);
+
+// Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
+// or any library that is using the messages framework can also be loaded this way.
+const messages = Messages.loadMessages('sfdx-lindmayer', 'sfdx-lindmayer');
+
+export default class Org extends SfdxCommand {
+
+  public static description = messages.getMessage('commandDescription');
+
+  public static examples = [
+  `$ sfdx hello:org --targetusername myOrg@example.com --targetdevhubusername devhub@org.com
+  Hello world! This is org: MyOrg and I will be around until Tue Mar 20 2018!
+  My hub org id is: 00Dxx000000001234
+  `,
+  `$ sfdx hello:org --name myname --targetusername myOrg@example.com
+  Hello myname! This is org: MyOrg and I will be around until Tue Mar 20 2018!
+  `
+  ];
+
+  public static args = [{name: 'file'}];
+
+  protected static flagsConfig = {
+    // flag with a value (-n, --name=VALUE)
+    force: flags.boolean({char: 'f', description: messages.getMessage('forceFlagDescription')})
+  };
+
+  // Comment this out if your command does not require an org username
+  protected static requiresUsername = true;
+
+  // Comment this out if your command does not support a hub org username
+  protected static supportsDevhubUsername = true;
+
+  // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
+  protected static requiresProject = false;
+
+  public async run(): Promise<AnyJson> {
+    
+    let command = 'sfdx lindmayer:data:xmlupsert --sobjecttype="geopointe__GP_Assignment_Plan__c" --sourcedir="geopointe/assignmentplan" --externalid="ExternalId__c"';
+    command = command + (this.flags.targetusername == undefined ? "" : " --targetusername=" + this.flags.targetusername);
+    shelljs.exec(command, { silent:true });
+
+    command = 'sfdx lindmayer:data:xmlupsert --sobjecttype="geopointe__GP_Folder__c" --sourcedir="geopointe/folder" --externalid="ExternalId__c"';
+    command = command + (this.flags.targetusername == undefined ? "" : " --targetusername=" + this.flags.targetusername);
+    shelljs.exec(command, { silent:true });
+
+    command = 'sfdx lindmayer:data:xmlupsert --sobjecttype="geopointe__Shape__c" --sourcedir="geopointe/shape" --externalid="ExternalId__c"';
+    command = command + (this.flags.targetusername == undefined ? "" : " --targetusername=" + this.flags.targetusername);
+    shelljs.exec(command, { silent:true });
+
+    command = 'sfdx lindmayer:data:xmlupsert --sobjecttype="geopointe__GP_Assignment_Area__c" --sourcedir="geopointe/assignmentarea" --externalid="ExternalId__c"';
+    command = command + (this.flags.targetusername == undefined ? "" : " --targetusername=" + this.flags.targetusername);
+    shelljs.exec(command, { silent:true });
+    // Return an object to be displayed with --json
+    //return { orgId: this.org.getOrgId(), outputString };
+
+    return null;
+  }
+}
