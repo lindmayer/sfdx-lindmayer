@@ -1,5 +1,5 @@
 //import { version } from '@oclif/command/lib/flags';
-import { core, flags, SfdxCommand  } from '@salesforce/command';
+import { core, SfdxCommand  } from '@salesforce/command';
 import {Messages, SfdxError } from '@salesforce/core';
 import { AnyJson } from '@salesforce/ts-types';
 import { MetadataObject, FileProperties, RetrieveRequest, Package, PackageTypeMembers } from 'jsforce/api/metadata'
@@ -28,12 +28,8 @@ export default class Org extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-  `$ sfdx hello:org --targetusername myOrg@example.com --targetdevhubusername devhub@org.com
-  Hello world! This is org: MyOrg and I will be around until Tue Mar 20 2018!
-  My hub org id is: 00Dxx000000001234
-  `,
-  `$ sfdx hello:org --name myname --targetusername myOrg@example.com
-  Hello myname! This is org: MyOrg and I will be around until Tue Mar 20 2018!
+  `$ sfdx lindmayer:source:retrieve:permissionsets --targetusername myOrg@example.com
+  Retrieves all permission sets from org with alias myOrg@example.com.
   `
   ];
 
@@ -41,8 +37,6 @@ export default class Org extends SfdxCommand {
 
   protected static flagsConfig = {
     // flag with a value (-n, --name=VALUE)
-    name: flags.string({char: 'n', description: messages.getMessage('nameFlagDescription')}),
-    force: flags.boolean({char: 'f', description: messages.getMessage('forceFlagDescription')})
   };
 
   // Comment this out if your command does not require an org username

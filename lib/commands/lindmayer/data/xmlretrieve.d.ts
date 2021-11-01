@@ -8,7 +8,6 @@ export default class Org extends SfdxCommand {
         outputdir: flags.Discriminated<flags.Option<string>>;
         filenameproperty: flags.Discriminated<flags.Option<string>>;
         query: flags.Discriminated<flags.Option<string>>;
-        force: flags.Discriminated<flags.Boolean<boolean>>;
     };
     protected static requiresUsername: boolean;
     protected static supportsDevhubUsername: boolean;

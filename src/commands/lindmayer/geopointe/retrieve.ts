@@ -1,4 +1,4 @@
-import { flags, SfdxCommand } from '@salesforce/command';
+import { SfdxCommand } from '@salesforce/command';
 import { Messages } from '@salesforce/core';
 import { AnyJson } from '@salesforce/ts-types';
 import * as shelljs from 'shelljs'
@@ -15,12 +15,9 @@ export default class Org extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-  `$ sfdx hello:org --targetusername myOrg@example.com --targetdevhubusername devhub@org.com
-  Hello world! This is org: MyOrg and I will be around until Tue Mar 20 2018!
-  My hub org id is: 00Dxx000000001234
-  `,
-  `$ sfdx hello:org --name myname --targetusername myOrg@example.com
-  Hello myname! This is org: MyOrg and I will be around until Tue Mar 20 2018!
+  `$ sfdx lindmayer:geopointe:retrieve
+  Retrieves Geopointe records assignment plan, folders, shapes and assignment areas 
+  and stores respective records as xml files in folder ./geopointe.
   `
   ];
 
@@ -28,7 +25,6 @@ export default class Org extends SfdxCommand {
 
   protected static flagsConfig = {
     // flag with a value (-n, --name=VALUE)
-    force: flags.boolean({char: 'f', description: messages.getMessage('forceFlagDescription')})
   };
 
   // Comment this out if your command does not require an org username

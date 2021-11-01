@@ -19,23 +19,22 @@ export default class Org extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-  `$ sfdx hello:org --targetusername myOrg@example.com --targetdevhubusername devhub@org.com
-  Hello world! This is org: MyOrg and I will be around until Tue Mar 20 2018!
-  My hub org id is: 00Dxx000000001234
+  `$ sfdx lindmayer:data:xmlretrieve --sobjecttype=CustomObject__c --filenameproperty=Name --outputdir=./customobject
+  Retrieves all records with all fields from Salesforce object CustomObject__c and
+  stores it in single xml files in directory customobject, one xml file per record.
+  The respective file name of the xml file is defined with property filenameproperty.
   `,
-  `$ sfdx hello:org --name myname --targetusername myOrg@example.com
-  Hello myname! This is org: MyOrg and I will be around until Tue Mar 20 2018!
+  `$ sfdx lindmayer:data:xmlretrieve --sobjecttype=CustomObject__c --filenameproperty=Name --outputdir=./customobject -query "SELECT Id from CustomObject__c"
+  Retrieves records defined by query and stores it in single xml files.
   `
   ];
 
   protected static flagsConfig = {
     // flag with a value (-n, --name=VALUE)
-    //name: flags.string({char: 'n', description: messages.getMessage('nameFlagDescription')}),
     sobjecttype: flags.string({char: 's', description: messages.getMessage('sobjecttypeFlagDescription')}),
     outputdir: flags.string({char: 'd', description: messages.getMessage('outputdirFlagDescription')}),
     filenameproperty: flags.string({char: 'n', description: messages.getMessage('filenamepropertyFlagDescription')}),
-    query: flags.string({char: 'q', description: messages.getMessage('queryFlagDescription')}),
-    force: flags.boolean({char: 'f', description: messages.getMessage('forceFlagDescription')})
+    query: flags.string({char: 'q', description: messages.getMessage('queryFlagDescription')})
   };
 
   // Comment this out if your command does not require an org username
@@ -112,8 +111,14 @@ export default class Org extends SfdxCommand {
         }
       });
 
-      let builder = new xml2js.Builder({rootName: sobjecttype, xmldec: {version: "1.0", encoding: "UTF-8", standalone: null}})
-      let xml = builder.buildObject(record);
+      let obj = {}
+      obj[sobjecttype] = {$: {"xmlns": "sfdx-lindmayer"}}
+      Object.keys(record).forEach(function(key) {
+        obj[sobjecttype][key] = record[key];
+      })
+      let builder = new xml2js.Builder({xmldec: {version: "1.0", encoding: "UTF-8", standalone: null}})
+      //let xml = builder.buildObject(rootElement);
+      let xml = builder.buildObject(obj);
       fs.writeFile(outputdir + "/" + record[filenameproperty].replace("/", "") + ".xml", xml, function(err) {
         if(err) {
           throw new SfdxError(messages.getMessage('errorFileWriteFailed', [outputdir + "/" + record[filenameproperty]]));
@@ -124,12 +129,6 @@ export default class Org extends SfdxCommand {
     //this.ux.log(result.records.toString());
     const outputString = result.records.toString();
 
-    // this.hubOrg is NOT guaranteed because supportsHubOrgUsername=true, as opposed to requiresHubOrgUsername.
-    // if (this.hubOrg) {
-    //   const hubOrgId = this.hubOrg.getOrgId();
-    //   this.ux.log(`My hub org id is: ${hubOrgId}`);
-    // }
-
     if (this.flags.force && this.args.file) {
       this.ux.log(`You input --force and a file: ${this.args.file}`);
     }
@@ -138,5 +137,3 @@ export default class Org extends SfdxCommand {
     return { orgId: this.org.getOrgId(), outputString };
   }
 }
-
-// sfdx sartorius:data:xmlimport --sobjecttype=geopointe__Shape__c --filenameproperty=Name --outputdir=".\geopointe\shapes" --fields="Id,OwnerId,IsDeleted,Name,CurrencyIsoCode,CreatedDate,CreatedById,LastModifiedDate,LastModifiedById,SystemModstamp,geopointe__Center__Latitude__s,geopointe__Center__Longitude__s,geopointe__Color__c,geopointe__Description__c,geopointe__Dissolve__c,geopointe__Folder__r.Name,geopointe__Geometry_Last_Modified__c,geopointe__Invalid_Reason__c,geopointe__Invalid__c,geopointe__Label_Point__Latitude__s,geopointe__Label_Point__Longitude__s,geopointe__Lat_Lng_10__c,geopointe__Lat_Lng_1__c,geopointe__Lat_Lng_2__c,geopointe__Lat_Lng_3__c,geopointe__Lat_Lng_4__c,geopointe__Lat_Lng_5__c,geopointe__Lat_Lng_6__c,geopointe__Lat_Lng_7__c,geopointe__Lat_Lng_8__c,geopointe__Lat_Lng_9__c,geopointe__Lat_Max__c,geopointe__Lat_Min__c,geopointe__Lng_Max__c,geopointe__Lng_Min__c,geopointe__Opacity__c,geopointe__Personal__c,geopointe__Radius__c,geopointe__Show_Label__c,geopointe__Straddles_180__c,geopointe__Type__c,geopointe__Units__c,geopointe__Usage_Type__c"

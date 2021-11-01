@@ -11,7 +11,6 @@ export default class Org extends SfdxCommand {
         sobjecttype: flags.Discriminated<flags.Option<string>>;
         sourcedir: flags.Discriminated<flags.Option<string>>;
         externalid: flags.Discriminated<flags.Option<string>>;
-        force: flags.Discriminated<flags.Boolean<boolean>>;
     };
     protected static requiresUsername: boolean;
     protected static supportsDevhubUsername: boolean;

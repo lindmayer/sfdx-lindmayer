@@ -1,13 +1,11 @@
 {
   "commandDescription": "print a greeting and your org IDs",
-  "nameFlagDescription": "name to print",
   "sobjecttypeFlagDescription": "sobject in org",
   "outputdirFlagDescription": "xml files output directory",
   "filenamepropertyFlagDescription": "property of sobject for xml file name",
   "queryFlagDescription": "soql query when not all fields should be retrieved",
   "sourcedirFlagDescription": "source directory",
   "externalidFlagDescription": "external id field",
-  "forceFlagDescription": "example boolean flag",
   "errorNoOrgResults": "No results found for the org '%s'.",
   "errorFileWriteFailed": "Could not write files"
 }

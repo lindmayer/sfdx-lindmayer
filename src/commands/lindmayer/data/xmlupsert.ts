@@ -34,12 +34,8 @@ export default class Org extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-  `$ sfdx hello:org --targetusername myOrg@example.com --targetdevhubusername devhub@org.com
-  Hello world! This is org: MyOrg and I will be around until Tue Mar 20 2018!
-  My hub org id is: 00Dxx000000001234
-  `,
-  `$ sfdx hello:org --name myname --targetusername myOrg@example.com
-  Hello myname! This is org: MyOrg and I will be around until Tue Mar 20 2018!
+  `$ sfdx lindmayer:data:xmlupsert --sobjecttype=CustomObject__c --sourcedir=./customobject --externalid=ExternalId__c
+  Upserts records from CustomObject__c stored as xml files in folder sourcedir with external id ExternalId__c.
   `
   ];
 
@@ -49,8 +45,7 @@ export default class Org extends SfdxCommand {
     // flag with a value (-n, --name=VALUE)
     sobjecttype: flags.string({char: 's', description: messages.getMessage('sobjecttypeFlagDescription')}),
     sourcedir: flags.string({char: 'p', description: messages.getMessage('sourcedirFlagDescription')}),
-    externalid: flags.string({char: 'p', description: messages.getMessage('externalidFlagDescription')}),
-    force: flags.boolean({char: 'f', description: messages.getMessage('forceFlagDescription')})
+    externalid: flags.string({char: 'p', description: messages.getMessage('externalidFlagDescription')})
   };
 
   // Comment this out if your command does not require an org username
@@ -87,7 +82,10 @@ export default class Org extends SfdxCommand {
         // Parse xml file string to object
       xml2js.parseString(data, { explicitArray: false }, function (err, xml) {
         // Iterate through properties of object...
+        delete xml[sobjecttype]["$"];
         Object.keys(xml[sobjecttype]).forEach(function(property) {
+          // Remove xml namespace property
+          delete xml["$"];
           // ...and remove fields that are not updateable
           if (sobjectMetadata.fields.find(element => element.name == property) != null 
                 && sobjectMetadata.fields.find(element => element.name == property).updateable == false 
